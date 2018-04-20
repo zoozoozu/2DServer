@@ -5,10 +5,13 @@
 #include "Scene/Scene.h"
 #include "Scene/Test/TestScene.h"
 
+#include "Server/Server.h"
+
 #include "Warp2DFramework.h"
 
 CWarp2DFramework::CWarp2DFramework() 
 {
+	s = CServer::getInstance();
 }
 
 CWarp2DFramework::~CWarp2DFramework()
@@ -28,26 +31,6 @@ void CWarp2DFramework::OnCreate(HWND hWnd, HINSTANCE hInst, shared_ptr<CIndRes> 
 	::SetUserDataPtr(m_hWnd, this);
 
 	m_pIndRes->CreateHwndRenderTarget(hWnd, &m_pd2dRenderTarget);
-
-	WSADATA	wsadata;
-	WSAStartup(MAKEWORD(2, 2), &wsadata);
-
-	g_mysocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
-
-	SOCKADDR_IN ServerAddr;
-	ZeroMemory(&ServerAddr, sizeof(SOCKADDR_IN));
-	ServerAddr.sin_family = AF_INET;
-	ServerAddr.sin_port = htons(MY_SERVER_PORT);
-	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-	int Result = WSAConnect(g_mysocket, (sockaddr *)&ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
-
-	WSAAsyncSelect(g_mysocket, main_window_handle, WM_SOCKET, FD_CLOSE | FD_READ);
-
-	send_wsabuf.buf = send_buffer;
-	send_wsabuf.len = BUF_SIZE;
-	recv_wsabuf.buf = recv_buffer;
-	recv_wsabuf.len = BUF_SIZE;
 
 	BuildScene<CTestScene>(L"Test"s);
 }
@@ -177,6 +160,22 @@ LRESULT CWarp2DFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, 
 		OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		return 0;
 
+	case WM_SOCKET:
+	{
+		if (WSAGETSELECTERROR(lParam)) {
+			closesocket((SOCKET)wParam);
+			break;
+		}
+		switch (WSAGETSELECTEVENT(lParam)) {
+		case FD_READ:
+			s->ReadPacket();
+			break;
+		case FD_CLOSE:
+			closesocket((SOCKET)wParam);
+			break;
+		}
+		break;
+	}
 	default:
 		break;
 	}

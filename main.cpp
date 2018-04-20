@@ -7,11 +7,12 @@
 #include "Framework/Timer/Timer.h"
 #include "Framework/Warp2DFramework.h"
 
+// Server 추가
+#include "Server/Server.h"
+
 #include "main.h"
 
 #define MAX_LOADSTRING 100
-
-
 
 namespace 
 {
@@ -22,6 +23,8 @@ namespace
 	shared_ptr<CIndRes> ind = make_shared<CIndRes>();
 	shared_ptr<CTimer> timer = make_shared<CTimer>();
 	CWarp2DFramework framework;
+
+	CServer *s = CServer::getInstance();
 
 	int g_iMarginWidth = 0;
 	int g_iMarginHeight = 0;
@@ -189,6 +192,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
+	s->setHwnd(hWnd);
+	s->setInstance(hInst);
+	s->Server_Init();
+
+	// Client가 만들어지기 전에 서버를 만들자.
 	timer->SetUpdateCaptionHwnd(hWnd);
 	framework.OnCreate(hWnd, hInst, ind, timer);
 

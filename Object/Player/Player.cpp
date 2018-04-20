@@ -60,7 +60,7 @@ void CPlayer::RegisterImage(ComPtr<ID2D1Bitmap1>&& bmp, D2D_SIZE_U szSprite) noe
 
 void CPlayer::Move(Dir dir)
 {
-	switch (m_Direction = dir)
+	/*switch (m_Direction = dir)
 	{
 	case Dir::left:			if (m_szCoord.width > 0) m_szCoord.width -= 1;
 		break;
@@ -70,6 +70,14 @@ void CPlayer::Move(Dir dir)
 		break;
 	case Dir::bottom:		if (m_szCoord.height < 50 - 1) m_szCoord.height += 1;
 		break;
+	}*/
+
+	switch (m_Direction = dir)
+	{
+	case Dir::left:			if (m_szCoord.width > 0) m_szCoord.width -= 1;
+	case Dir::top:			if (m_szCoord.height > 0) m_szCoord.height -= 1;
+	case Dir::right:		if (m_szCoord.width < 50 - 1) m_szCoord.width += 1;
+	case Dir::bottom:		if (m_szCoord.height < 50 - 1) m_szCoord.height += 1;
 	}
 
 	SetPosition(GetPositionByCoord(m_szCoord));

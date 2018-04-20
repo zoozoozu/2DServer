@@ -46,20 +46,20 @@ void CServer::ProcessPacket(char * ptr)
 			g_myid = id;
 		}
 		if (id == g_myid) {
-			player.x = my_packet->x;
-			player.y = my_packet->y;
-			player.attr |= BOB_ATTR_VISIBLE;
+			g_myClient.SetCoordX(my_packet->x);
+			g_myClient.SetCoordY(my_packet->y);
+			//player.attr |= BOB_ATTR_VISIBLE;
 		}
 		else if (id < NPC_START) {
-			skelaton[id].x = my_packet->x;
-			skelaton[id].y = my_packet->y;
-			skelaton[id].attr |= BOB_ATTR_VISIBLE;
+			g_CloneClient[id].SetCoordX(my_packet->x);
+			g_CloneClient[id].SetCoordY(my_packet->y);
+			//g_CloneClient[id].attr |= BOB_ATTR_VISIBLE;
 		}
-		else {
+	/*	else {
 			npc[id - NPC_START].x = my_packet->x;
 			npc[id - NPC_START].y = my_packet->y;
 			npc[id - NPC_START].attr |= BOB_ATTR_VISIBLE;
-		}
+		}*/
 		break;
 	}
 	case SC_POS:
@@ -67,19 +67,17 @@ void CServer::ProcessPacket(char * ptr)
 		sc_packet_pos *my_packet = reinterpret_cast<sc_packet_pos *>(ptr);
 		int other_id = my_packet->id;
 		if (other_id == g_myid) {
-			g_left_x = my_packet->x - 4;
-			g_top_y = my_packet->y - 4;
-			player.x = my_packet->x;
-			player.y = my_packet->y;
+			g_myClient.SetCoordX(my_packet->x);
+			g_myClient.SetCoordY(my_packet->y);
 		}
 		else if (other_id < NPC_START) {
-			skelaton[other_id].x = my_packet->x;
-			skelaton[other_id].y = my_packet->y;
+			g_CloneClient[other_id].SetCoordX(my_packet->x);
+			g_CloneClient[other_id].SetCoordY(my_packet->y);
 		}
-		else {
-			npc[other_id - NPC_START].x = my_packet->x;
-			npc[other_id - NPC_START].y = my_packet->y;
-		}
+		//else {
+		//	npc[other_id - NPC_START].x = my_packet->x;
+		//	npc[other_id - NPC_START].y = my_packet->y;
+		//}
 		break;
 	}
 
@@ -88,19 +86,24 @@ void CServer::ProcessPacket(char * ptr)
 		sc_packet_remove_player *my_packet = reinterpret_cast<sc_packet_remove_player *>(ptr);
 		int other_id = my_packet->id;
 		if (other_id == g_myid) {
-			player.attr &= ~BOB_ATTR_VISIBLE;
+			// 아주 멀리 날려버리기.
+			g_myClient.SetCoordX(1000.f);
+			g_myClient.SetCoordY(1000.f);
+			//player.attr &= ~BOB_ATTR_VISIBLE;
 		}
 		else if (other_id < NPC_START) {
-			skelaton[other_id].attr &= ~BOB_ATTR_VISIBLE;
+			g_CloneClient[other_id].SetCoordX(1000.f);
+			g_CloneClient[other_id].SetCoordY(1000.f);
+			//skelaton[other_id].attr &= ~BOB_ATTR_VISIBLE;
 		}
-		else {
+		/*else {
 			npc[other_id - NPC_START].attr &= ~BOB_ATTR_VISIBLE;
-		}
+		}*/
 		break;
 	}
 	case SC_CHAT:
 	{
-		sc_packet_chat *my_packet = reinterpret_cast<sc_packet_chat *>(ptr);
+	/*	sc_packet_chat *my_packet = reinterpret_cast<sc_packet_chat *>(ptr);
 		int other_id = my_packet->id;
 		if (other_id == g_myid) {
 			wcsncpy_s(player.message, my_packet->message, 256);
@@ -114,7 +117,7 @@ void CServer::ProcessPacket(char * ptr)
 			wcsncpy_s(npc[other_id - NPC_START].message, my_packet->message, 256);
 			npc[other_id - NPC_START].message_time = GetTickCount();
 		}
-		break;
+		break;*/
 
 	}
 	default:
@@ -122,11 +125,11 @@ void CServer::ProcessPacket(char * ptr)
 	}
 }
 
-void CServer::ReadPacket(SOCKET sock)
+void CServer::ReadPacket()
 {
 	DWORD iobyte, ioflag = 0;
 
-	int ret = WSARecv(sock, &recv_wsabuf, 1, &iobyte, &ioflag, NULL, NULL);
+	int ret = WSARecv(m_mysocket, &recv_wsabuf, 1, &iobyte, &ioflag, NULL, NULL);
 	if (ret) {
 		int err_code = WSAGetLastError();
 		printf("Recv Error [%d]\n", err_code);
@@ -150,4 +153,14 @@ void CServer::ReadPacket(SOCKET sock)
 			iobyte = 0;
 		}
 	}
+}
+
+void CServer::setHwnd(HWND hwnd)
+{
+	m_hwnd = hwnd;
+}
+
+void CServer::setInstance(HINSTANCE ins)
+{
+	m_hist = ins;
 }

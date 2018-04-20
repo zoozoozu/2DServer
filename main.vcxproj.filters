@@ -114,7 +114,10 @@
     <ClInclude Include="Object\Player\Player.h">
       <Filter>Object\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Server.h">
+    <ClInclude Include="Server\Server.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\ServerPlayer.h">
       <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
@@ -158,8 +161,11 @@
     <ClCompile Include="Object\Player\Player.cpp">
       <Filter>Object\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Server\Server.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\ServerPlayer.cpp">
+      <Filter>Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

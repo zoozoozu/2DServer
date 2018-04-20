@@ -171,7 +171,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\Test\TestScene.h" />
-    <ClInclude Include="Server.h" />
+    <ClInclude Include="Server\Server.h" />
+    <ClInclude Include="Server\ServerPlayer.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UI\Inventory\Inventory.h" />
     <ClInclude Include="UI\UIBase.h" />
@@ -193,7 +194,8 @@
     </ClCompile>
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\Test\TestScene.cpp" />
-    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Server\Server.cpp" />
+    <ClCompile Include="Server\ServerPlayer.cpp" />
     <ClCompile Include="UI\Inventory\Inventory.cpp" />
     <ClCompile Include="UI\UIBase.cpp" />
   </ItemGroup>

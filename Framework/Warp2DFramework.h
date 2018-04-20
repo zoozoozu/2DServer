@@ -4,12 +4,10 @@ class CIndRes;
 class CTimer;
 
 class CScene;
-
-
+class CServer;
 
 class CWarp2DFramework
 {
-
 public:
 	CWarp2DFramework();
 	~CWarp2DFramework();
@@ -35,9 +33,11 @@ public:
 		return static_cast<Scene*>(FindScene(Tag));
 	}
 
+	// Server
+	CServer			*s;
+
 private:
 	void BuildScene(wstring Tag, const unique_ptr<CScene>& scene);
-
 
 public:
 

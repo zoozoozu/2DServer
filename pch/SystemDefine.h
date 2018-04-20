@@ -44,3 +44,7 @@ constexpr D2D_RECT_F g_rcItemRect{ -g_fTileWidth * 0.5f, -g_fTileHeight * 0.5f, 
 
 #define DEBUG_CLIENT_WIDTH	400
 #define DEBUG_CLIENT_HEIGHT	600
+
+// Server Buffer용 Define
+#define BUF_SIZE			1024		//protocol로 옮겨도 될듯?
+
