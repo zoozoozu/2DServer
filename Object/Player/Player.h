@@ -9,6 +9,7 @@ class CPlayer
 public:
 	enum Dir { left = 1, top = 3, right = 2, bottom = 0 };
 
+	CPlayer() {};
 	CPlayer(D2D_SIZE_U pt);
 	virtual ~CPlayer() override;
 
@@ -24,6 +25,7 @@ public:
 	void Move(Dir dir);
 
 	const D2D_SIZE_U& GetCoord() const { return m_szCoord; }
+	void SetCoord(D2D_SIZE_U pt) { m_szCoord = pt; }
 
 private:
 

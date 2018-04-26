@@ -41,66 +41,32 @@ void CServer::ProcessPacket(char * ptr)
 	{
 		sc_packet_put_player *my_packet = reinterpret_cast<sc_packet_put_player *>(ptr);
 		int id = my_packet->id;
-		if (first_time) {
+		if (first_time == true) {
+			g_Client[my_packet->id].set_id(my_packet->id);
+			client_id = my_packet->id;
 			first_time = false;
-			g_myid = id;
 		}
-		if (id == g_myid) {
-			g_myClient.SetCoordX(my_packet->x);
-			g_myClient.SetCoordY(my_packet->y);
-			//player.attr |= BOB_ATTR_VISIBLE;
-		}
-		else if (id < NPC_START) {
-			g_CloneClient[id].SetCoordX(my_packet->x);
-			g_CloneClient[id].SetCoordY(my_packet->y);
-			//g_CloneClient[id].attr |= BOB_ATTR_VISIBLE;
-		}
-	/*	else {
-			npc[id - NPC_START].x = my_packet->x;
-			npc[id - NPC_START].y = my_packet->y;
-			npc[id - NPC_START].attr |= BOB_ATTR_VISIBLE;
-		}*/
+		g_Client[my_packet->id].SetCoordX(my_packet->x);
+		g_Client[my_packet->id].SetCoordY(my_packet->y);
+		//player.attr |= BOB_ATTR_VISIBLE;
 		break;
 	}
 	case SC_POS:
 	{
 		sc_packet_pos *my_packet = reinterpret_cast<sc_packet_pos *>(ptr);
-		int other_id = my_packet->id;
-		if (other_id == g_myid) {
-			g_myClient.SetCoordX(my_packet->x);
-			g_myClient.SetCoordY(my_packet->y);
-		}
-		else if (other_id < NPC_START) {
-			g_CloneClient[other_id].SetCoordX(my_packet->x);
-			g_CloneClient[other_id].SetCoordY(my_packet->y);
-		}
-		//else {
-		//	npc[other_id - NPC_START].x = my_packet->x;
-		//	npc[other_id - NPC_START].y = my_packet->y;
-		//}
+			g_Client[my_packet->id].SetPosX(my_packet->x);
+			g_Client[my_packet->id].SetPosY(my_packet->y);
 		break;
 	}
 
 	case SC_REMOVE_PLAYER:
 	{
 		sc_packet_remove_player *my_packet = reinterpret_cast<sc_packet_remove_player *>(ptr);
-		int other_id = my_packet->id;
-		if (other_id == g_myid) {
-			// 아주 멀리 날려버리기.
-			g_myClient.SetCoordX(1000.f);
-			g_myClient.SetCoordY(1000.f);
-			//player.attr &= ~BOB_ATTR_VISIBLE;
-		}
-		else if (other_id < NPC_START) {
-			g_CloneClient[other_id].SetCoordX(1000.f);
-			g_CloneClient[other_id].SetCoordY(1000.f);
-			//skelaton[other_id].attr &= ~BOB_ATTR_VISIBLE;
-		}
-		/*else {
-			npc[other_id - NPC_START].attr &= ~BOB_ATTR_VISIBLE;
-		}*/
+		g_Client[my_packet->id].SetCoordX(1000.f);
+		g_Client[my_packet->id].SetCoordY(1000.f);
 		break;
 	}
+
 	case SC_CHAT:
 	{
 	/*	sc_packet_chat *my_packet = reinterpret_cast<sc_packet_chat *>(ptr);
@@ -163,4 +129,72 @@ void CServer::setHwnd(HWND hwnd)
 void CServer::setInstance(HINSTANCE ins)
 {
 	m_hist = ins;
+}
+
+void CServer::Send_up(DWORD up)
+{
+	DWORD iobyte;
+	DWORD ioflag = 0;
+
+	cs_packet_up *up_packet = reinterpret_cast<cs_packet_up *>(send_buffer);
+	up_packet->type = up;
+	up_packet->size = sizeof(up_packet);
+	send_wsabuf.len = sizeof(up_packet);
+
+	int ret = WSASend(m_mysocket, &send_wsabuf, 1, &iobyte, 0, nullptr, nullptr);
+	if (ret) {
+		int error_code = WSAGetLastError();
+		printf("Error while sending packet [%d]", error_code);
+	}
+}
+
+void CServer::Send_down(DWORD down)
+{
+	DWORD iobyte;
+	DWORD ioflag = 0;
+
+	cs_packet_down *down_packet = reinterpret_cast<cs_packet_down *>(send_buffer);
+	down_packet->type = down;
+	down_packet->size = sizeof(down_packet);
+	send_wsabuf.len = sizeof(down_packet);
+
+	int ret = WSASend(m_mysocket, &send_wsabuf, 1, &iobyte, 0, nullptr, nullptr);
+	if (ret) {
+		int error_code = WSAGetLastError();
+		printf("Error while sending packet [%d]", error_code);
+	}
+}
+
+void CServer::Send_right(DWORD right)
+{
+	DWORD iobyte;
+	DWORD ioflag = 0;
+
+	cs_packet_right *right_packet = reinterpret_cast<cs_packet_right *>(send_buffer);
+	right_packet->type = right;
+	right_packet->size = sizeof(right_packet);
+	send_wsabuf.len = sizeof(right_packet);
+
+	int ret = WSASend(m_mysocket, &send_wsabuf, 1, &iobyte, 0, nullptr, nullptr);
+	if (ret) {
+		int error_code = WSAGetLastError();
+		printf("Error while sending packet [%d]", error_code);
+	}
+}
+
+void CServer::Send_left(DWORD left)
+{
+	DWORD iobyte;
+	DWORD ioflag = 0;
+
+	cs_packet_left *left_packet = reinterpret_cast<cs_packet_left *>(send_buffer);
+	left_packet->type = left;
+	left_packet->size = sizeof(left_packet);
+	send_wsabuf.len = sizeof(left_packet);
+
+	int ret = WSASend(m_mysocket, &send_wsabuf, 1, &iobyte, 0, nullptr, nullptr);
+	if (ret) {
+		int error_code = WSAGetLastError();
+		printf("Error while sending packet [%d]", error_code);
+	}
 }

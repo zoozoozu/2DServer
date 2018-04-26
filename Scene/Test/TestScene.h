@@ -28,8 +28,8 @@ private:
 	ComPtr<ID2D1SolidColorBrush>	m_pd2dsbrTileA		{ nullptr }	;
 	ComPtr<ID2D1SolidColorBrush>	m_pd2dsbrTileB		{ nullptr }	;
 
+	CPlayer							*m_pPlayer;
 
-	CPlayer							m_Player;
 	CCamera							m_Camera;
 
 	list<unique_ptr<CItem>>			m_lstItem;

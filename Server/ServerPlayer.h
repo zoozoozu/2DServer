@@ -15,6 +15,11 @@ public:
 		return &inst;
 	}
 
+	void set_id(int id);
+
 	void SetCoordX(int CoordX);
 	void SetCoordY(int CoordY);
+
+	void SetPosY(int CoordY);
+	void SetPosX(int CoordX);
 };

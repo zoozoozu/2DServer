@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Framework/IndRes/IndRes.h"
+#include "Server/Server.h"
 #include "Player.h"
 
 CPlayer::CPlayer(D2D_SIZE_U sz)
@@ -60,6 +61,7 @@ void CPlayer::RegisterImage(ComPtr<ID2D1Bitmap1>&& bmp, D2D_SIZE_U szSprite) noe
 
 void CPlayer::Move(Dir dir)
 {
+	CServer *s = CServer::getInstance();
 	/*switch (m_Direction = dir)
 	{
 	case Dir::left:			if (m_szCoord.width > 0) m_szCoord.width -= 1;
@@ -74,10 +76,14 @@ void CPlayer::Move(Dir dir)
 
 	switch (m_Direction = dir)
 	{
-	case Dir::left:			if (m_szCoord.width > 0) m_szCoord.width -= 1;
-	case Dir::top:			if (m_szCoord.height > 0) m_szCoord.height -= 1;
-	case Dir::right:		if (m_szCoord.width < 50 - 1) m_szCoord.width += 1;
-	case Dir::bottom:		if (m_szCoord.height < 50 - 1) m_szCoord.height += 1;
+	case Dir::left:			if (m_szCoord.width > 0) m_szCoord.width -= 1; s->Send_left(CS_LEFT);
+		break;
+	case Dir::top:			if (m_szCoord.height > 0) m_szCoord.height -= 1; s->Send_up(CS_UP);
+		break;
+	case Dir::right:		if (m_szCoord.width < 50 - 1) m_szCoord.width += 1; s->Send_right(CS_RIGHT);
+		break;
+	case Dir::bottom:		if (m_szCoord.height < 50 - 1) m_szCoord.height += 1; s->Send_down(CS_DOWN);
+		break;
 	}
 
 	SetPosition(GetPositionByCoord(m_szCoord));

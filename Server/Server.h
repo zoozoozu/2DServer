@@ -20,8 +20,8 @@ public:
 	~CServer();
 
 public:
-	CServer_Player g_myClient;
-	CServer_Player g_CloneClient[MAX_USER];
+	CServer_Player g_Client[10];
+	int client_id;		// 클라이언트 스스로 아이디를 저장하는 변수
 
 	// 싱글톤 사용을 위함
 	static CServer* getInstance()
@@ -36,4 +36,10 @@ public:
 
 	void setHwnd(HWND hwnd);
 	void setInstance(HINSTANCE ins);
+
+	// Send Packet
+	void Send_up(DWORD position);
+	void Send_down(DWORD position);
+	void Send_right(DWORD position);
+	void Send_left(DWORD position);
 };
