@@ -9,7 +9,6 @@ class CPlayer
 public:
 	enum Dir { left = 1, top = 3, right = 2, bottom = 0 };
 
-	CPlayer() {};
 	CPlayer(D2D_SIZE_U pt);
 	virtual ~CPlayer() override;
 
@@ -32,9 +31,9 @@ private:
 	ComPtr<ID2D1Bitmap1>		m_bmpImage;
 	D2D_SIZE_U					m_szCoord;
 
-	Dir							m_Direction;
+	Dir							m_Direction{ left };
 	D2D_SIZE_U					m_szSprite;
 	UINT						m_iSprite;
 
-	float						m_fTick;
+	float						m_fTick{ 0 };
 };

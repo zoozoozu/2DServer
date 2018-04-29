@@ -28,7 +28,7 @@ private:
 	ComPtr<ID2D1SolidColorBrush>	m_pd2dsbrTileA		{ nullptr }	;
 	ComPtr<ID2D1SolidColorBrush>	m_pd2dsbrTileB		{ nullptr }	;
 
-	CPlayer							*m_pPlayer;
+	vector<shared_ptr<CPlayer>>		m_vPlayer;
 
 	CCamera							m_Camera;
 

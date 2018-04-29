@@ -34,8 +34,8 @@
 using namespace std;
 
 // Server Protocol
-//#include "..\..\2018Server\2018Server\protocol.h"
-#include "..\2018SERVER\2018Server\2018Server\protocol.h"
+#include "..\2018SERVER\2018Server\2018Server\2018Server\protocol.h"
+//#include "..\2018SERVER\2018Server\2018Server\protocol.h"
 #pragma comment(lib, "ws2_32.lib")
 
 #include <filesystem>

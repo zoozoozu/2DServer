@@ -10,13 +10,12 @@
 
 CTestScene::CTestScene()
 {
-	m_pPlayer = new CPlayer[2];
-	
 	for (int i = 0; i < 10; ++i)
 	{
-		m_pPlayer[i].SetCoord(SizeU(25, 25));
+		auto player = make_shared<CPlayer>(SizeU(25, 25));
+		
+		m_vPlayer.push_back(move(player));
 	}
-
 }
 
 
@@ -86,22 +85,22 @@ bool CTestScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		{
 		case 'A':
 		{
-			m_pPlayer->Move(CPlayer::Dir::left);
+			m_vPlayer[0]->Move(CPlayer::Dir::left);
 			break;
 		}
 		case 'W':
 		{
-			m_pPlayer->Move(CPlayer::Dir::top);
+			m_vPlayer[0]->Move(CPlayer::Dir::top);
 			break;
 		}
 		case 'D':
 		{
-			m_pPlayer->Move(CPlayer::Dir::right);
+			m_vPlayer[0]->Move(CPlayer::Dir::right);
 			break;
 		}
 		case 'S':
 		{
-			m_pPlayer->Move(CPlayer::Dir::bottom);
+			m_vPlayer[0]->Move(CPlayer::Dir::bottom);
 			break;
 		}	
 		case 'Z':		m_Camera.Scale(m_Camera.GetScale() * 2.f);
@@ -135,10 +134,11 @@ bool CTestScene::OnCreate(wstring && tag, CWarp2DFramework * pFramework)
 	rendertarget->CreateSolidColorBrush(ColorF{ ColorF::MistyRose }, &m_pd2dsbrTileA);
 	rendertarget->CreateSolidColorBrush(ColorF{ ColorF::LightPink }, &m_pd2dsbrTileB);
 
-	m_Camera.SetPosition(m_pPlayer->GetPosition());
+	m_Camera.SetPosition(m_vPlayer[0]->GetPosition());
 	m_Camera.SetAnchor(Point2F(0.f, 0.f));
 
-	m_pPlayer->RegisterImage(m_pIndRes.get(), rendertarget.Get(), "Graphics/player.png", SizeU(4,4));
+	for (const auto& p : m_vPlayer)
+		p->RegisterImage(m_pIndRes.get(), rendertarget.Get(), "Graphics/player.png", SizeU(4, 4));
 
 	uniform_int_distribution<> pos_random{ 0,49 };
 	uniform_int_distribution<> img_random{ 0,5 };
@@ -179,13 +179,14 @@ bool CTestScene::OnCreate(wstring && tag, CWarp2DFramework * pFramework)
 
 void CTestScene::Update(float fTimeElapsed)
 {
-	m_Camera.SetPosition(m_pPlayer->GetPosition());
+	m_Camera.SetPosition(m_vPlayer[0]->GetPosition());
 	m_uiInventory.Update(fTimeElapsed);
 
-	m_pPlayer->Update(fTimeElapsed);
+	for (auto &p : m_vPlayer)
+		p->Update(fTimeElapsed);
 	
 	for (auto p = begin(m_lstItem); p != end(m_lstItem); ++p)
-		if ((*p)->IsCollision(m_pPlayer->GetCoord()))
+		if ((*p)->IsCollision(m_vPlayer[0]->GetCoord()))
 		{
 			m_uiInventory.GetItem(move(*p));
 			m_lstItem.erase(p);
@@ -204,8 +205,10 @@ void CTestScene::Draw(ID2D1HwndRenderTarget * pd2dRenderTarget)
 				  GetPositionByCoord(SizeU(x,y)) + g_rcItemRect
 				, (x + y) % 2 ? m_pd2dsbrTileA.Get() : m_pd2dsbrTileB.Get());
 
-	m_pPlayer->Draw(pd2dRenderTarget);
 
+	for (const auto& p : m_vPlayer)
+		p->Draw(pd2dRenderTarget);
+	
 	pd2dRenderTarget->DrawRectangle(
 		RectF(50, 50, 70, 70)
 		, m_pd2dsbrDefault.Get());
